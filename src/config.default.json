@@ -1,7 +1,3 @@
 {
-  "region": "TODO",
-  "poolData": {
-    "UserPoolId": "TODO",
-    "ClientId": "TODO"
-  }
+  "region": "TODO"
 }
