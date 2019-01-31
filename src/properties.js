@@ -56,6 +56,24 @@ class Properties {
 
     return this._createTablePromise(params);
   }
+
+  async _deleteTablePromise(params) {
+    return new Promise((resolve, reject) => {
+      this._db.deleteTable(params, (err, data) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(data);
+        }
+      });
+    });
+  }
+
+  async deleteTable() {
+    return this._deleteTablePromise({
+      TableName: TABLE_NAME
+    });
+  }
 }
 
 module.exports = Properties;
