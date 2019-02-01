@@ -1,10 +1,7 @@
 // TODO: how do secondary indexes work?
 
-// TODO: auto backups?
-
-// TODO: Point-in-time recovery?
-
-// TODO: need to poll when table created to wait for ACTIVE state before use?
+// TODO: need to poll when table created to wait for ACTIVE state before use? i.e.
+// https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/DynamoDB.html#waitFor-property
 
 const config = require('./config');
 const AWS = require('aws-sdk');
@@ -69,6 +66,9 @@ class Properties {
     const response = await this._createTablePromise(params);
 
     await this._enableAutoScaling();
+
+    // TODO: need to wait for it to be ready
+    // await this._enableContinuousBackups();
 
     return response;
   }
@@ -147,6 +147,27 @@ class Properties {
   async _enableAutoScaling() {
     await this._enableAutoScalingForOperation('Read');
     await this._enableAutoScalingForOperation('Write');
+  }
+
+  async _updateContinuousBackupsPromise(params) {
+    return new Promise((resolve, reject) => {
+      this._db.updateContinuousBackups(params, (err, data) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(data);
+        }
+      });
+    });
+  }
+
+  async _enableContinuousBackups() {
+    return this._updateContinuousBackupsPromise({
+      PointInTimeRecoverySpecification: {
+        PointInTimeRecoveryEnabled: true
+      },
+      TableName: TABLE_NAME
+    });
   }
 }
 
