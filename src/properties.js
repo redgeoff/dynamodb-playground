@@ -67,8 +67,11 @@ class Properties {
 
     await this._enableAutoScaling();
 
+    // Note: still not ready to enable continuous backup
+    // await this._waitFor('tableExists');
+
     // TODO: need to wait for it to be ready
-    // await this._enableContinuousBackups();
+    await this._enableContinuousBackups();
 
     return response;
   }
@@ -166,6 +169,24 @@ class Properties {
       PointInTimeRecoverySpecification: {
         PointInTimeRecoveryEnabled: true
       },
+      TableName: TABLE_NAME
+    });
+  }
+
+  async _waitForPromise(state, params) {
+    return new Promise((resolve, reject) => {
+      this._db.waitFor(state, params, (err, data) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(data);
+        }
+      });
+    });
+  }
+
+  async _waitFor(state) {
+    return this._waitForPromise(state, {
       TableName: TABLE_NAME
     });
   }
