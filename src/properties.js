@@ -70,7 +70,8 @@ class Properties {
     // Note: still not ready to enable continuous backup
     // await this._waitFor('tableExists');
 
-    // TODO: need to wait for it to be ready
+    // TODO: need to wait for it to be ready. Doesn't appear to be a way to wait so may have to
+    // retry until don't receive ContinuousBackupsUnavailableException error
     await this._enableContinuousBackups();
 
     return response;
